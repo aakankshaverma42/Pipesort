@@ -7,10 +7,31 @@ const ffmpeg = require("fluent-ffmpeg");
 // Add Redis module
 const redis = require("redis"); 
 
+//Add 
+const Redis = require('ioredis');
+const client = new Redis();
+
+client.ping((err, result) => {
+  if (err) {
+    console.error('Error:', err);
+  } else {
+    console.log('Redis server is running:', result === 'PONG');
+  }
+});
+
+
+
 
 // Create a new queue
 const queue = new bull("video-processing");
-const redisClient = redis.createClient(); 
+
+// Create a new Redis client with configuration
+const redisClient = redis.createClient({
+  maxRetriesPerRequest: 50,
+  retryStrategy: (times) => {
+    return Math.min(times * 50, 2000); // Retry with increasing delays up to 2 seconds
+  },
+});
 
 const db = require("./Collections/schema");
 
