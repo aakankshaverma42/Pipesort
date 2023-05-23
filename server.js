@@ -70,9 +70,28 @@ app.post("/remove-noise", async (req, res) => {
 });
 
 // Define the `process` function to process videos in the background
+// queue.process(async (job) => {
+//   try {
+//     const videoLink = job.data.videoLink;
+//     return {
+//       success: true,
+//       processedVideoUrl,
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error("Video processing failed");
+//   }
+// });
+
+
+//new code
 queue.process(async (job) => {
   try {
     const videoLink = job.data.videoLink;
+    
+    // Process the video and remove the noise
+    const processedVideoUrl = await processVideo(videoLink); // Replace with your video processing logic
+    
     return {
       success: true,
       processedVideoUrl,
@@ -82,6 +101,19 @@ queue.process(async (job) => {
     throw new Error("Video processing failed");
   }
 });
+
+async function processVideo(videoLink) {
+  // Video processing logic goes here
+  // Replace with your actual code to process the video and obtain the processed video URL
+  
+  // Example: Simulating processing with a delay
+  await new Promise((resolve) => setTimeout(resolve, 5000)); // Delay of 5 seconds
+  
+  // Example: Assigning a dummy processed video URL
+  const processedVideoUrl = "https://drive.google.com/file/d/1zL2aqe6PqrMkOV3GxXYdimraFblHCe9X/view";
+  
+  return processedVideoUrl;
+}
 
 
 // Handle unhandled promise rejections
